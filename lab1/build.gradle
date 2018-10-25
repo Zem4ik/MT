@@ -5,12 +5,17 @@ plugins {
 group 'ru.zem4ik'
 version '1.0-SNAPSHOT'
 
+apply plugin: 'application'
+
 repositories {
     mavenCentral()
 }
 
+mainClassName = 'MainKt'
+
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    compile fileTree(include: ['*.jar'], dir: 'jung2-2_0_1')
 }
 
 compileKotlin {
