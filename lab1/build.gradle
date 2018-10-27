@@ -6,6 +6,7 @@ group 'ru.zem4ik'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'application'
+//apply plugin: 'org.junit.platform.gradle.plugin'
 
 repositories {
     mavenCentral()
@@ -14,8 +15,15 @@ repositories {
 mainClassName = 'MainKt'
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-    compile fileTree(include: ['*.jar'], dir: 'jung2-2_0_1')
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.3.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation fileTree(include: ['*.jar'], dir: 'jung2-2_0_1')
+}
+
+test {
+    useJUnitPlatform()
 }
 
 compileKotlin {
