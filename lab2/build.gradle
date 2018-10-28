@@ -5,12 +5,24 @@ plugins {
 group 'ru.zem4ik'
 version '1.0-SNAPSHOT'
 
+apply plugin: 'application'
+apply plugin: 'antlr'
+
 repositories {
     mavenCentral()
 }
 
+mainClassName = 'parser/ExpressionExampleKt'
+
+
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    antlr "org.antlr:antlr4:4.5"
+}
+
+generateGrammarSource {
+    maxHeapSize = "4g"
+    arguments += ["-visitor", "-long-messages"]
 }
 
 compileKotlin {
@@ -19,3 +31,5 @@ compileKotlin {
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
+
+sourceSets.main.java.srcDirs += new File(buildDir, "generated-src/")

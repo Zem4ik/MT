@@ -6,20 +6,19 @@ group 'ru.zem4ik'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'application'
-//apply plugin: 'org.junit.platform.gradle.plugin'
 
 repositories {
     mavenCentral()
 }
 
-mainClassName = 'MainKt'
+mainClassName = 'SimpleExampleKt'
 
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.3.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-    implementation fileTree(include: ['*.jar'], dir: 'jung2-2_0_1')
+    implementation fileTree(include: ['*.jar'], dir: 'lib/jung2-2_0_1')
 }
 
 test {
