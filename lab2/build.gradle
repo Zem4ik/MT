@@ -12,8 +12,7 @@ repositories {
     mavenCentral()
 }
 
-mainClassName = 'parser/ExpressionExampleKt'
-
+mainClassName = 'ExpressionExampleKt'
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
@@ -23,6 +22,7 @@ dependencies {
 generateGrammarSource {
     maxHeapSize = "4g"
     arguments += ["-visitor", "-long-messages"]
+    outputDirectory = new File("${project.buildDir}/generated-src/parser/".toString())
 }
 
 compileKotlin {

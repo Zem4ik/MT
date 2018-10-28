@@ -1,7 +1,5 @@
-package parser
-
-import ExpressionLexer
-import ExpressionParser
+import parser.ExpressionLexer
+import parser.ExpressionParser
 import org.antlr.v4.runtime.ANTLRFileStream
 import org.antlr.v4.runtime.CommonTokenStream
 

@@ -1,5 +1,9 @@
 grammar Expression;
 
+@header {
+    package parser;
+}
+
 NL      : '\n';
 INT     : [0-9]+;
 Variable: [a-zA-Z_][a-zA-Z_0-9]*;
