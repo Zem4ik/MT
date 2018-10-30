@@ -1,0 +1,29 @@
+grammar Numeric
+
+e1
+    : c1 e2
+    | EPS
+    ;
+
+e2
+    : '|' c1 e2
+    | EPS
+    ;
+
+c1
+    : s k c2
+    ;
+
+c2
+    : s k c2
+    | EPS
+    ;
+
+s
+    : 'a' | '(' e1 ')'
+    ;
+
+k
+    : '*'
+    | EPS
+    ;

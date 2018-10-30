@@ -16,7 +16,7 @@ mainClassName = 'ExpressionExampleKt'
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-    antlr "org.antlr:antlr4:4.5"
+    antlr "org.antlr:antlr4:4.7.1"
 }
 
 generateGrammarSource {
