@@ -4,21 +4,44 @@ grammar Expression;
     package parser;
 }
 
-NL      : '\n';
-INT     : [0-9]+;
-Variable: [a-zA-Z_][a-zA-Z_0-9]*;
+NL
+    : '\n'
+    ;
+INT
+    : [0-9]+
+    ;
+Variable
+    : [a-zA-Z_][a-zA-Z_0-9]*
+    ;
 
-POW   : '^';
-PLUS  : '+';
-EQUAL : '=';
-MINUS : '-';
-MULT  : '*';
-DIV   : '/';
-LPAR  : '(';
-RPAR  : ')';
+POW
+    : '^'
+    ;
+PLUS
+    : '+'
+    ;
+EQUAL
+    : '='
+    ;
+MINUS
+    : '-'
+    ;
+MULT
+    : '*'
+    ;
+DIV
+    : '/'
+    ;
+LPAR
+    : '('
+    ;
+RPAR
+    : ')'
+    ;
 
 expr
     : setVar ';' NL expr        # ToSetVar
+    | EOF                       # End
     ;
 
 setVar
@@ -50,4 +73,8 @@ atom
     : INT                       # Integer
     | Variable                  # Variable
     | LPAR sumOrSub RPAR        # Braces
+    ;
+
+WS
+    : [\r\n\t ]+ -> skip
     ;

@@ -34,7 +34,7 @@ parseRules
     //terminal
     | t=terminalName COLON terminalDescription[$t.elem] SEMICOLON parseRules
     | EOF
-;
+    ;
 
 arguments[Element elem]
     : LBrack
@@ -42,24 +42,24 @@ arguments[Element elem]
             $elem.addArgument($v.type, $v.name);
         }
         (Comma v=readArgument{ $elem.addArgument($v.type, $v.name); })*? RBrack
-;
+    ;
 
 returnsBlock[Element elem]
     : LBrack v=readArgument { $elem.setReturnAttr($v.type, $v.name); } RBrack
-;
+    ;
 
 readArgument returns [String type, String name]
     : t=(TOKEN|RULE) n=(TOKEN|RULE) {
         $type = $t.text;
         $name = $n.text;
     }
-;
+    ;
 
 init[NonTerminal nt]
     : INIT i=CODE {
         $nt.setInit(($i.text == null) ? "" : removeBraces($i.text));
     }
-;
+    ;
 
 nonTerminalName returns [NonTerminal elem]
     : r=RULE {
@@ -74,7 +74,7 @@ nonTerminalName returns [NonTerminal elem]
             nonTerminals.put(name, $elem);
         }
     }
-;
+    ;
 
 terminalName returns [Terminal elem]
     : t=TOKEN {
@@ -86,7 +86,7 @@ terminalName returns [Terminal elem]
             terminals.put(name, $elem);
         }
     }
-;
+    ;
 
 terminalDescription[Terminal elem]
     // string
@@ -109,14 +109,14 @@ terminalDescription[Terminal elem]
 
 parseAlternatives[NonTerminal elem]
     : expressions[$elem, new Rule()] (VBAR parseAlternatives[$elem])?
-;
+    ;
 
 expressions[NonTerminal elem, Rule rule]
     : expression[rule] expressions[$elem, $rule]
     | expression[rule] {
         $elem.addRule(rule);
     }
-;
+    ;
 
 expression[Rule rule]
     : nt=nonTerminalName LBrack vs=argsNames RBrack (c=CODE)? {
@@ -128,7 +128,7 @@ expression[Rule rule]
     | t=readTerminal (c=CODE)? {
         $rule.add($t.elem, null, $c.text == null ? null : removeBraces($c.text));
     }
-;
+    ;
 
 argsNames returns [List<String> args]
     @init {
@@ -141,7 +141,7 @@ argsNames returns [List<String> args]
     | v=argName {
         $args.add($v.name);
     }
-;
+    ;
 
 argName returns [String name]
     : n=(TOKEN|RULE) {
@@ -150,7 +150,7 @@ argName returns [String name]
     | n=CODE {
         $name = removeBraces($n.text);
     }
-;
+    ;
 
 readTerminal returns [Terminal elem]
     : name=terminalName {
@@ -168,30 +168,72 @@ readTerminal returns [Terminal elem]
         $elem.addString(removeBraces($t.text));
         terminals.put(name, $elem);
     }
-;
+    ;
 
-VBAR          : '|' ;
-COLON         : ':' ;
-SEMICOLON     : ';' ;
-OPAREN        : '(' ;
-CPAREN        : ')' ;
-LBrack        : '[' ;
-RBrack        : ']' ;
-QUESTION      : '?' ;
-PLUS          : '+' ;
-ASTERISK      : '*' ;
-Comma         : ',' ;
+VBAR
+    : '|'
+    ;
+COLON
+    : ':'
+    ;
+SEMICOLON
+    : ';'
+    ;
+OPAREN
+    : '('
+    ;
+CPAREN
+    : ')'
+    ;
+LBrack
+    : '['
+    ;
+RBrack
+    : ']'
+    ;
+QUESTION
+    : '?'
+    ;
+PLUS
+    : '+'
+    ;
+ASTERISK
+    : '*'
+    ;
+Comma
+    : ','
+    ;
 
-RETURNS       : 'returns' ;
-HEADER        : '@header' ;
-MEMBERS       : '@members' ;
-INIT          : '@init' ;
+RETURNS
+    : 'returns'
+    ;
+HEADER
+    : '@header'
+    ;
+MEMBERS
+    : '@members'
+    ;
+INIT
+    : '@init'
+    ;
 
-RULE          : [a-z_][a-zA-Z0-9_]* ;
-TOKEN         : [A-Z][a-zA-Z0-9_]* ;
+RULE
+    : [a-z_][a-zA-Z0-9_]*
+    ;
+TOKEN
+    : [A-Z][a-zA-Z0-9_]*
+    ;
 
-ANY           : '\''.+?'\'';
-CODE          : '{'.+?'}';
-REGEXP        : '/'.+?'/' ;
+ANY
+    : '\''.+?'\''
+    ;
+CODE
+    : '{'.+?'}'
+    ;
+REGEXP
+    : '/'.+?'/'
+    ;
 
-WS            : [\r\n\t ]+ -> skip ;
+WS
+    : [\r\n\t ]+ -> skip
+    ;
