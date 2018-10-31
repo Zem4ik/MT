@@ -1,5 +1,5 @@
 import java.nio.file.Paths
 
 fun main(args: Array<String>) {
-    parse("input.txt")
+    parse("input2.txt")
 }

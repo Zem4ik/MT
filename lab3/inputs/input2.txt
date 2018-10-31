@@ -1,4 +1,4 @@
-grammar Numeric
+grammar Regular
 
 e1
     : c1 e2
@@ -20,7 +20,7 @@ c2
     ;
 
 s
-    : 'a' | '(' e1 ')'
+    : /[a-z]/ | '(' e1 ')'
     ;
 
 k

@@ -12,7 +12,7 @@ repositories {
     mavenCentral()
 }
 
-mainClassName = 'MainKt'
+mainClassName = 'ExampleKt'
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"

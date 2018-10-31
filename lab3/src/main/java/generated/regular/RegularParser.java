@@ -1,13 +1,14 @@
+package generated.regular;
 
 import java.io.InputStream;
 import java.text.ParseException;
 
-public class NumericParser {
+public class RegularParser {
 
-	private NumericLexer lex;
+	private RegularLexer lex;
 
 	public void parse(InputStream input) throws ParseException {
-		lex = new NumericLexer(input);
+		lex = new RegularLexer(input);
 		lex.nextToken();
 		e1();
 	}
@@ -17,15 +18,18 @@ public class NumericParser {
 		switch (lex.getCurToken()) {
 			case TERM1: {
 
+				assert lex.getCurToken() != RegularToken.TERM1;
 				lex.nextToken();
 				break;
 			}
 			case TERM2: {
 
+				assert lex.getCurToken() != RegularToken.TERM2;
 				lex.nextToken();
 				e1();
 				
 
+				assert lex.getCurToken() != RegularToken.TERM3;
 				lex.nextToken();
 				break;
 			}
@@ -54,6 +58,7 @@ public class NumericParser {
 			}
 			case TERM4: {
 
+				assert lex.getCurToken() != RegularToken.TERM4;
 				lex.nextToken();
 				break;
 			}
@@ -111,6 +116,7 @@ public class NumericParser {
 			}
 			case TERM0: {
 
+				assert lex.getCurToken() != RegularToken.TERM0;
 				lex.nextToken();
 				c1();
 				

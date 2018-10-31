@@ -1,14 +1,15 @@
+package generated.regular;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 
-class NumericLexer {
+class RegularLexer {
 	private InputStream input;
 	private int curChar, curPos;
 	private String curString;
-	private NumericToken curToken;
+	private RegularToken curToken;
 
-	NumericLexer(InputStream input) throws ParseException {
+	RegularLexer(InputStream input) throws ParseException {
 		this.input = input;
 		curPos = 0;
 		nextChar();
@@ -32,51 +33,50 @@ class NumericLexer {
 			nextChar();
 		}
 		if (curChar == -1) {
-			curToken = NumericToken.END;
+			curToken = RegularToken.END;
 			return;
 		}
 
 		curString = "";
-		curToken = NumericToken.END;
-		NumericToken prev = NumericToken.END;
-		while (curToken == NumericToken.END) {
+		curToken = RegularToken.END;
+		RegularToken prev = RegularToken.END;
+		while (curToken == RegularToken.END) {
 			curString = curString.concat(Character.toString((char)curChar));
 			switch (curString) {
 				case "|":
 					nextChar();
-					curToken = NumericToken.TERM0;
-					break;
-				case "a":
-					nextChar();
-					curToken = NumericToken.TERM1;
+					curToken = RegularToken.TERM0;
 					break;
 				case "(":
 					nextChar();
-					curToken = NumericToken.TERM2;
+					curToken = RegularToken.TERM2;
 					break;
 				case ")":
 					nextChar();
-					curToken = NumericToken.TERM3;
+					curToken = RegularToken.TERM3;
 					break;
 				case "*":
 					nextChar();
-					curToken = NumericToken.TERM4;
+					curToken = RegularToken.TERM4;
 					break;
 				case "EPS":
 					nextChar();
-					curToken = NumericToken.EPS;
+					curToken = RegularToken.EPS;
 					break;
 				case "END":
 					nextChar();
-					curToken = NumericToken.END;
+					curToken = RegularToken.END;
 					break;
 				default:
-					if ((curChar == -1 || isBlank(curChar)) && prev == NumericToken.END) {
+					if (curString.matches("[a-z]")) {
+						nextChar();
+						curToken = RegularToken.TERM1;
+					} else if ((curChar == -1 || isBlank(curChar)) && prev == RegularToken.END) {
 						throw new ParseException("Illegal character '" + curString.charAt(0) + "' at position ", curPos - curString.length());
 					}
 			}
-			if (curToken == NumericToken.END) {
-				if (prev != NumericToken.END) {
+			if (curToken == RegularToken.END) {
+				if (prev != RegularToken.END) {
 					curString = curString.substring(0, curString.length() - 1);
 					curToken = prev;
 				} else {
@@ -84,12 +84,12 @@ class NumericLexer {
 				}
 			} else {
 				prev = curToken;
-				curToken = NumericToken.END;
+				curToken = RegularToken.END;
 			}
 		}
 	}
 
-	NumericToken getCurToken() {
+	RegularToken getCurToken() {
 		return curToken;
 	}
 

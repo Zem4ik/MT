@@ -1,14 +1,15 @@
+package generated.arithmetic;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 
-class Lexer {
+class ArithmeticLexer {
 	private InputStream input;
 	private int curChar, curPos;
 	private String curString;
-	private Token curToken;
+	private ArithmeticToken curToken;
 
-	Lexer(InputStream input) throws ParseException {
+	ArithmeticLexer(InputStream input) throws ParseException {
 		this.input = input;
 		curPos = 0;
 		nextChar();
@@ -32,31 +33,54 @@ class Lexer {
 			nextChar();
 		}
 		if (curChar == -1) {
-			curToken = Token.END;
+			curToken = ArithmeticToken.END;
 			return;
 		}
 
 		curString = "";
-		curToken = Token.END;
-		Token prev = Token.END;
-		while (curToken == Token.END) {
+		curToken = ArithmeticToken.END;
+		ArithmeticToken prev = ArithmeticToken.END;
+		while (curToken == ArithmeticToken.END) {
 			curString = curString.concat(Character.toString((char)curChar));
 			switch (curString) {
+				case "+":
+					nextChar();
+					curToken = ArithmeticToken.ADD;
+					break;
+				case "(":
+					nextChar();
+					curToken = ArithmeticToken.TERM0;
+					break;
+				case "*":
+					nextChar();
+					curToken = ArithmeticToken.MUL;
+					break;
+				case ")":
+					nextChar();
+					curToken = ArithmeticToken.TERM1;
+					break;
 				case "EPS":
 					nextChar();
-					curToken = Token.EPS;
+					curToken = ArithmeticToken.EPS;
+					break;
+				case "^^":
+					nextChar();
+					curToken = ArithmeticToken.POW;
 					break;
 				case "END":
 					nextChar();
-					curToken = Token.END;
+					curToken = ArithmeticToken.END;
 					break;
 				default:
-					if ((curChar == -1 || isBlank(curChar)) && prev == Token.END) {
+					if (curString.matches("[1-9][0-9]*|0")) {
+						nextChar();
+						curToken = ArithmeticToken.NUM;
+					} else if ((curChar == -1 || isBlank(curChar)) && prev == ArithmeticToken.END) {
 						throw new ParseException("Illegal character '" + curString.charAt(0) + "' at position ", curPos - curString.length());
 					}
 			}
-			if (curToken == Token.END) {
-				if (prev != Token.END) {
+			if (curToken == ArithmeticToken.END) {
+				if (prev != ArithmeticToken.END) {
 					curString = curString.substring(0, curString.length() - 1);
 					curToken = prev;
 				} else {
@@ -64,12 +88,12 @@ class Lexer {
 				}
 			} else {
 				prev = curToken;
-				curToken = Token.END;
+				curToken = ArithmeticToken.END;
 			}
 		}
 	}
 
-	Token getCurToken() {
+	ArithmeticToken getCurToken() {
 		return curToken;
 	}
 

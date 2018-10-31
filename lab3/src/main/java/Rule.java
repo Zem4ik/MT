@@ -18,10 +18,6 @@ public class Rule {
         units.add(new Unit(e, code, args));
     }
 
-    void addAll(Rule other) {
-        units.addAll(other.units);
-    }
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

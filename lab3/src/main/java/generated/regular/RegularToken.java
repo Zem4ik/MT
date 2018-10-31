@@ -1,4 +1,5 @@
-public enum NumericToken {
+package generated.regular;
+public enum RegularToken {
 	TERM0, 
 	TERM1, 
 	TERM2, 
