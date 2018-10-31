@@ -3,7 +3,14 @@ import java.io.InputStream
 private val epsilon = '\u03B5';
 
 public enum class NodeType {
-    E1, E2, C1, C2, S, K, Terminal
+    E1, E2, C1, C2, S, K, Terminal;
+
+    override fun toString(): String {
+        if (this == Terminal) {
+            return "T"
+        }
+        return super.toString()
+    }
 }
 
 public class Node(val nodeType: NodeType, vararg children: Node) {
@@ -17,19 +24,13 @@ public class Node(val nodeType: NodeType, vararg children: Node) {
 
     var letter: Char = '\u0000'
 
-    fun isSimple() : Boolean {
+    fun isSimple(): Boolean {
         return (nodeType == NodeType.Terminal && letter == '\u0000' && children.size == 0)
     }
 
     override fun toString(): String {
-        if (letter == epsilon) {
+        if (letter != '\u0000') {
             return "${nodeType}: ${letter}"
-        }
-        if (children.size == 0 && (nodeType == NodeType.Terminal || nodeType == NodeType.S)) {
-            return if (letter == '\u0000')
-                "T"
-            else
-                letter.toString()
         }
         return nodeType.toString()
     }
@@ -45,9 +46,8 @@ public class Parser {
         return parseInternal(NodeType.E1)
     }
 
-    private fun terminalNode(nodeType: NodeType, letter: Char? = null): Node {
-        val result = Node(nodeType,
-                Node(NodeType.Terminal))
+    private fun terminalNode(letter: Char? = null, nodeType: NodeType = NodeType.Terminal): Node {
+        val result = Node(nodeType)
         letter?.let {
             result.letter = it
             if (letter != epsilon) {
@@ -59,7 +59,7 @@ public class Parser {
 
     private fun checkToken(token: Token): Node {
         return if (this.token == token)
-            terminalNode(NodeType.Terminal, token.char)
+            terminalNode(token.char, NodeType.Terminal)
         else
             throw throw ParseException("Expected character at ${tokenAnalyzer.currentPosition}")
     }
@@ -68,46 +68,44 @@ public class Parser {
         when (nodeType) {
             NodeType.E1 -> {
                 return when (token) {
-                    Token.END -> terminalNode(nodeType, epsilon)
-                    else -> Node(nodeType,
+                    Token.LETTER,
+                    Token.LPAREN -> Node(nodeType,
                             parseInternal(NodeType.C1),
                             parseInternal(NodeType.E2))
+                    Token.END -> terminalNode(epsilon, nodeType)
+                    else -> throw ParseException("Expected character at ${tokenAnalyzer.currentPosition}")
                 }
             }
             NodeType.E2 -> {
                 return when (token) {
-                    Token.END -> terminalNode(nodeType, epsilon)
-                    else -> try {
-                        Node(nodeType,
-                                checkToken(Token.OR),
-                                parseInternal(NodeType.C1),
-                                parseInternal(NodeType.E2))
-                    } catch (e: ParseException) {
-                        terminalNode(nodeType, epsilon)
-                    }
+                    Token.OR -> Node(nodeType,
+                            terminalNode(token.char),
+                            parseInternal(NodeType.C1),
+                            parseInternal(NodeType.E2))
+                    else -> terminalNode(epsilon, nodeType)
                 }
             }
             NodeType.C1 -> {
-                return Node(nodeType, parseInternal(NodeType.S), parseInternal(NodeType.K), parseInternal(NodeType.C2))
+                return Node(nodeType,
+                        parseInternal(NodeType.S),
+                        parseInternal(NodeType.K),
+                        parseInternal(NodeType.C2))
             }
             NodeType.C2 -> {
                 return when (token) {
-                    Token.END -> terminalNode(nodeType)
-                    else -> try {
-                        Node(nodeType,
-                                parseInternal(NodeType.S),
-                                parseInternal(NodeType.K),
-                                parseInternal(NodeType.C2))
-                    } catch (e: ParseException) {
-                        terminalNode(nodeType, epsilon)
-                    }
+                    Token.LETTER,
+                    Token.LPAREN -> Node(nodeType,
+                            parseInternal(NodeType.S),
+                            parseInternal(NodeType.K),
+                            parseInternal(NodeType.C2))
+                    else -> terminalNode(epsilon, nodeType)
                 }
             }
             NodeType.S -> {
                 return when (token) {
-                    Token.LETTER -> terminalNode(nodeType, token.char)
+                    Token.LETTER -> terminalNode(token.char, nodeType)
                     Token.LPAREN -> Node(NodeType.S,
-                            checkToken(Token.LPAREN),
+                            terminalNode(token.char),
                             parseInternal(NodeType.E1),
                             checkToken(Token.RPAREN))
                     else -> throw ParseException("Expected character at ${tokenAnalyzer.currentPosition}")
@@ -115,8 +113,8 @@ public class Parser {
             }
             NodeType.K -> {
                 return when (token) {
-                    Token.STAR -> terminalNode(nodeType, '*')
-                    else -> terminalNode(nodeType, epsilon)
+                    Token.STAR -> terminalNode('*', nodeType)
+                    else -> terminalNode(epsilon, nodeType)
                 }
             }
             else -> throw ParseException("Expected character at ${tokenAnalyzer.currentPosition}")
