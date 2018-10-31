@@ -1,11 +1,12 @@
 grammar Arithmetic
 
 add returns [int val]
-    : mul add_[{"h"}, mul] { val = add_; }
+    : mul add_[mul] { val = add_; }
 ;
 
-add_[String hello, int acc] returns [int val]
-    : ADD mul { int res = acc + mul; } add_[hello, res] { val = add_; }
+add_[int acc] returns [int val]
+    : ADD mul { int res = acc + mul; } add_[res] { val = add_; }
+    | MINUS mul { int res = acc - mul; } add_[res] { val = add_; }
     | EPS { val = acc; }
 ;
 
@@ -15,6 +16,7 @@ mul returns [int val]
 
 mul_[int acc] returns [int val]
     : MUL pow { int res = acc * pow; } mul_[res] { val = mul_; }
+    | DIV pow { int res = acc / pow; } mul_[res] { val = mul_; }
     | EPS { val = acc; }
 ;
 
@@ -32,8 +34,20 @@ term returns [int val]
     | '(' add ')' { val = add; }
 ;
 
-MUL : '*' ;
-ADD : '+' ;
-POW : '^^' ;
+MUL
+    : '*'
+    ;
+ADD
+    : '+'
+    ;
+MINUS
+    : '-'
+    ;
+DIV
+    : '/'
+    ;
+POW
+    : '^'
+    ;
 
 NUM : /[1-9][0-9]*|0/ ;

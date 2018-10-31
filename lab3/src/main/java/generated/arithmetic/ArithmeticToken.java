@@ -1,5 +1,6 @@
 package generated.arithmetic;
 public enum ArithmeticToken {
+	DIV, 
 	ADD, 
 	TERM0, 
 	MUL, 
@@ -7,5 +8,6 @@ public enum ArithmeticToken {
 	NUM, 
 	EPS, 
 	POW, 
-	END
+	END, 
+	MINUS
 }

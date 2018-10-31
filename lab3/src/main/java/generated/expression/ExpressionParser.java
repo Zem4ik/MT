@@ -1,23 +1,30 @@
-package generated.arithmetic;
-
+package generated.expression;
+import java.util.HashMap;
 import java.io.InputStream;
 import java.text.ParseException;
 
-public class ArithmeticParser {
+public class ExpressionParser {
+HashMap<String, Integer> variables = new HashMap<>();
+	private ExpressionLexer lex;
 
-	private ArithmeticLexer lex;
-
-	public int parse(InputStream input) throws ParseException {
-		lex = new ArithmeticLexer(input);
+	public void parse(InputStream input) throws ParseException {
+		lex = new ExpressionLexer(input);
 		lex.nextToken();
-		return add();
+		expr();
 	}
 
 	private int add() throws ParseException {
 
 		int val = 0;
 		switch (lex.getCurToken()) {
-			case TERM0: {
+			case TERM1: {
+				int mul = mul();
+				
+				int add_ = add_(mul);
+				val = add_;
+				break;
+			}
+			case TERM2: {
 				int mul = mul();
 				
 				int add_ = add_(mul);
@@ -40,9 +47,17 @@ public class ArithmeticParser {
 
 		int val = 0;
 		switch (lex.getCurToken()) {
+			case TERM0: {
+val = acc;
+				break;
+			}
+			case EPS: {
+val = acc;
+				break;
+			}
 			case ADD: {
 
-				assert lex.getCurToken() != ArithmeticToken.ADD;
+				assert lex.getCurToken() != ExpressionToken.ADD;
 				lex.nextToken();
 				int mul = mul();
 				int res = acc + mul;
@@ -50,26 +65,18 @@ public class ArithmeticParser {
 				val = add_;
 				break;
 			}
-			case EPS: {
+			case TERM3: {
 val = acc;
 				break;
 			}
 			case MINUS: {
 
-				assert lex.getCurToken() != ArithmeticToken.MINUS;
+				assert lex.getCurToken() != ExpressionToken.MINUS;
 				lex.nextToken();
 				int mul = mul();
 				int res = acc - mul;
 				int add_ = add_(res);
 				val = add_;
-				break;
-			}
-			case TERM1: {
-val = acc;
-				break;
-			}
-			case END: {
-val = acc;
 				break;
 			}
 			default:
@@ -81,7 +88,7 @@ val = acc;
 
 		int val = 0;
 		switch (lex.getCurToken()) {
-			case ADD: {
+			case TERM0: {
 val = 1;
 				break;
 			}
@@ -89,13 +96,17 @@ val = 1;
 val = 1;
 				break;
 			}
-			case MINUS: {
+			case DIV: {
+val = 1;
+				break;
+			}
+			case MUL: {
 val = 1;
 				break;
 			}
 			case POW: {
 
-				assert lex.getCurToken() != ArithmeticToken.POW;
+				assert lex.getCurToken() != ExpressionToken.POW;
 				lex.nextToken();
 				int term = term();
 				
@@ -103,19 +114,15 @@ val = 1;
 				val = (int)Math.pow(term, pow_);
 				break;
 			}
-			case MUL: {
+			case ADD: {
 val = 1;
 				break;
 			}
-			case TERM1: {
+			case TERM3: {
 val = 1;
 				break;
 			}
-			case END: {
-val = 1;
-				break;
-			}
-			case DIV: {
+			case MINUS: {
 val = 1;
 				break;
 			}
@@ -128,7 +135,14 @@ val = 1;
 
 		int val = 0;
 		switch (lex.getCurToken()) {
-			case TERM0: {
+			case TERM1: {
+				int pow = pow();
+				
+				int mul_ = mul_(pow);
+				val = mul_;
+				break;
+			}
+			case TERM2: {
 				int pow = pow();
 				
 				int mul_ = mul_(pow);
@@ -147,11 +161,47 @@ val = 1;
 		}
 		return val;
 	}
+	private String setVar() throws ParseException {
+
+		String result = null;
+		switch (lex.getCurToken()) {
+			case TERM1: {
+				String variable = variable();
+				
+
+				assert lex.getCurToken() != ExpressionToken.EQUAL;
+				lex.nextToken();
+				int add = add();
+				int addResult = add;
+        variables.put(variable, addResult);
+        result = variable + " = " + String.valueOf(addResult);
+				break;
+			}
+			default:
+				throw new AssertionError();
+		}
+		return result;
+	}
+	private String variable() throws ParseException {
+
+		String name = null;
+		switch (lex.getCurToken()) {
+			case TERM1: {
+name = lex.getCurString();
+				assert lex.getCurToken() != ExpressionToken.TERM1;
+				lex.nextToken();
+				break;
+			}
+			default:
+				throw new AssertionError();
+		}
+		return name;
+	}
 	private int mul_(int acc) throws ParseException {
 
 		int val = 0;
 		switch (lex.getCurToken()) {
-			case ADD: {
+			case TERM0: {
 val = acc;
 				break;
 			}
@@ -159,13 +209,19 @@ val = acc;
 val = acc;
 				break;
 			}
-			case MINUS: {
-val = acc;
+			case DIV: {
+
+				assert lex.getCurToken() != ExpressionToken.DIV;
+				lex.nextToken();
+				int pow = pow();
+				int res = acc / pow;
+				int mul_ = mul_(res);
+				val = mul_;
 				break;
 			}
 			case MUL: {
 
-				assert lex.getCurToken() != ArithmeticToken.MUL;
+				assert lex.getCurToken() != ExpressionToken.MUL;
 				lex.nextToken();
 				int pow = pow();
 				int res = acc * pow;
@@ -173,22 +229,16 @@ val = acc;
 				val = mul_;
 				break;
 			}
-			case TERM1: {
+			case ADD: {
 val = acc;
 				break;
 			}
-			case END: {
+			case TERM3: {
 val = acc;
 				break;
 			}
-			case DIV: {
-
-				assert lex.getCurToken() != ArithmeticToken.DIV;
-				lex.nextToken();
-				int pow = pow();
-				int res = acc / pow;
-				int mul_ = mul_(res);
-				val = mul_;
+			case MINUS: {
+val = acc;
 				break;
 			}
 			default:
@@ -200,7 +250,14 @@ val = acc;
 
 		int val = 0;
 		switch (lex.getCurToken()) {
-			case TERM0: {
+			case TERM1: {
+				int term = term();
+				
+				int pow_ = pow_();
+				val = (int)Math.pow(term, pow_);
+				break;
+			}
+			case TERM2: {
 				int term = term();
 				
 				int pow_ = pow_();
@@ -219,24 +276,54 @@ val = acc;
 		}
 		return val;
 	}
+	private void expr() throws ParseException {
+
+		switch (lex.getCurToken()) {
+			case TERM1: {
+				String setVar = setVar();
+				System.out.println(setVar);
+
+				assert lex.getCurToken() != ExpressionToken.TERM0;
+				lex.nextToken();
+				expr();
+				
+				break;
+			}
+			case EPS: {
+
+				break;
+			}
+			case END: {
+
+				break;
+			}
+			default:
+				throw new AssertionError();
+		}
+	}
 	private int term() throws ParseException {
 
 		int val = 0;
 		switch (lex.getCurToken()) {
-			case TERM0: {
+			case TERM1: {
+				String variable = variable();
+				val = variables.get(variable);
+				break;
+			}
+			case TERM2: {
 
-				assert lex.getCurToken() != ArithmeticToken.TERM0;
+				assert lex.getCurToken() != ExpressionToken.TERM2;
 				lex.nextToken();
 				int add = add();
 				
 val = add;
-				assert lex.getCurToken() != ArithmeticToken.TERM1;
+				assert lex.getCurToken() != ExpressionToken.TERM3;
 				lex.nextToken();
 				break;
 			}
 			case NUM: {
 val = Integer.parseInt(lex.getCurString());
-				assert lex.getCurToken() != ArithmeticToken.NUM;
+				assert lex.getCurToken() != ExpressionToken.NUM;
 				lex.nextToken();
 				break;
 			}
