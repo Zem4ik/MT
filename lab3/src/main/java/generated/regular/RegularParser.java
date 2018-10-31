@@ -16,35 +16,46 @@ public class RegularParser {
 	private void s() throws ParseException {
 
 		switch (lex.getCurToken()) {
-			case TERM1: {
+			case TERM2: {
 
-				assert lex.getCurToken() != RegularToken.TERM1;
+				if (lex.getCurToken() != RegularToken.TERM2)
+					throw new IllegalArgumentException("Unexpected token " + lex.getCurString() + " at position: " + (lex.getCurPos() - 1));
+				lex.nextToken();
+				e3();
+				
+
+				if (lex.getCurToken() != RegularToken.TERM3)
+					throw new IllegalArgumentException("Unexpected token " + lex.getCurString() + " at position: " + (lex.getCurPos() - 1));
 				lex.nextToken();
 				break;
 			}
-			case TERM2: {
+			case TERM1: {
 
-				assert lex.getCurToken() != RegularToken.TERM2;
-				lex.nextToken();
-				e1();
-				
-
-				assert lex.getCurToken() != RegularToken.TERM3;
+				if (lex.getCurToken() != RegularToken.TERM1)
+					throw new IllegalArgumentException("Unexpected token " + lex.getCurString() + " at position: " + (lex.getCurPos() - 1));
 				lex.nextToken();
 				break;
 			}
 			default:
-				throw new AssertionError();
+				throw new IllegalArgumentException("Unexpected token " + lex.getCurString() + " at position: " + (lex.getCurPos() - 1));
 		}
 	}
 	private void k() throws ParseException {
 
 		switch (lex.getCurToken()) {
-			case END: {
+			case EPS: {
 
 				break;
 			}
-			case TERM1: {
+			case TERM3: {
+
+				break;
+			}
+			case TERM2: {
+
+				break;
+			}
+			case EOF: {
 
 				break;
 			}
@@ -52,43 +63,28 @@ public class RegularParser {
 
 				break;
 			}
-			case TERM3: {
+			case TERM1: {
 
 				break;
 			}
 			case TERM4: {
 
-				assert lex.getCurToken() != RegularToken.TERM4;
+				if (lex.getCurToken() != RegularToken.TERM4)
+					throw new IllegalArgumentException("Unexpected token " + lex.getCurString() + " at position: " + (lex.getCurPos() - 1));
 				lex.nextToken();
-				break;
-			}
-			case TERM2: {
-
-				break;
-			}
-			case EPS: {
-
+				k();
+				
 				break;
 			}
 			default:
-				throw new AssertionError();
+				throw new IllegalArgumentException("Unexpected token " + lex.getCurString() + " at position: " + (lex.getCurPos() - 1));
 		}
 	}
 	private void e1() throws ParseException {
 
 		switch (lex.getCurToken()) {
-			case END: {
+			case EPS: {
 
-				break;
-			}
-			case TERM1: {
-				c1();
-				
-				e2();
-				
-				break;
-			}
-			case TERM3: {
 
 				break;
 			}
@@ -97,26 +93,51 @@ public class RegularParser {
 				
 				e2();
 				
+
+				if (lex.getCurToken() != RegularToken.EOF)
+					throw new IllegalArgumentException("Unexpected token " + lex.getCurString() + " at position: " + (lex.getCurPos() - 1));
+				lex.nextToken();
 				break;
 			}
-			case EPS: {
+			case END: {
+
 
 				break;
 			}
+			case TERM1: {
+				c1();
+				
+				e2();
+				
+
+				if (lex.getCurToken() != RegularToken.EOF)
+					throw new IllegalArgumentException("Unexpected token " + lex.getCurString() + " at position: " + (lex.getCurPos() - 1));
+				lex.nextToken();
+				break;
+			}
 			default:
-				throw new AssertionError();
+				throw new IllegalArgumentException("Unexpected token " + lex.getCurString() + " at position: " + (lex.getCurPos() - 1));
 		}
 	}
 	private void e2() throws ParseException {
 
 		switch (lex.getCurToken()) {
-			case END: {
+			case EPS: {
+
+				break;
+			}
+			case TERM3: {
+
+				break;
+			}
+			case EOF: {
 
 				break;
 			}
 			case TERM0: {
 
-				assert lex.getCurToken() != RegularToken.TERM0;
+				if (lex.getCurToken() != RegularToken.TERM0)
+					throw new IllegalArgumentException("Unexpected token " + lex.getCurString() + " at position: " + (lex.getCurPos() - 1));
 				lex.nextToken();
 				c1();
 				
@@ -124,21 +145,22 @@ public class RegularParser {
 				
 				break;
 			}
-			case TERM3: {
-
-				break;
-			}
-			case EPS: {
-
-				break;
-			}
 			default:
-				throw new AssertionError();
+				throw new IllegalArgumentException("Unexpected token " + lex.getCurString() + " at position: " + (lex.getCurPos() - 1));
 		}
 	}
 	private void c1() throws ParseException {
 
 		switch (lex.getCurToken()) {
+			case TERM2: {
+				s();
+				
+				k();
+				
+				c2();
+				
+				break;
+			}
 			case TERM1: {
 				s();
 				
@@ -146,6 +168,42 @@ public class RegularParser {
 				
 				c2();
 				
+				break;
+			}
+			default:
+				throw new IllegalArgumentException("Unexpected token " + lex.getCurString() + " at position: " + (lex.getCurPos() - 1));
+		}
+	}
+	private void e3() throws ParseException {
+
+		switch (lex.getCurToken()) {
+			case TERM2: {
+				c1();
+				
+				e2();
+				
+				break;
+			}
+			case TERM1: {
+				c1();
+				
+				e2();
+				
+				break;
+			}
+			default:
+				throw new IllegalArgumentException("Unexpected token " + lex.getCurString() + " at position: " + (lex.getCurPos() - 1));
+		}
+	}
+	private void c2() throws ParseException {
+
+		switch (lex.getCurToken()) {
+			case EPS: {
+
+				break;
+			}
+			case TERM3: {
+
 				break;
 			}
 			case TERM2: {
@@ -157,35 +215,15 @@ public class RegularParser {
 				
 				break;
 			}
-			default:
-				throw new AssertionError();
-		}
-	}
-	private void c2() throws ParseException {
+			case EOF: {
 
-		switch (lex.getCurToken()) {
-			case END: {
-
-				break;
-			}
-			case TERM1: {
-				s();
-				
-				k();
-				
-				c2();
-				
 				break;
 			}
 			case TERM0: {
 
 				break;
 			}
-			case TERM3: {
-
-				break;
-			}
-			case TERM2: {
+			case TERM1: {
 				s();
 				
 				k();
@@ -194,12 +232,8 @@ public class RegularParser {
 				
 				break;
 			}
-			case EPS: {
-
-				break;
-			}
 			default:
-				throw new AssertionError();
+				throw new IllegalArgumentException("Unexpected token " + lex.getCurString() + " at position: " + (lex.getCurPos() - 1));
 		}
 	}
 }

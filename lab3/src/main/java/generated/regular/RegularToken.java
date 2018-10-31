@@ -6,5 +6,6 @@ public enum RegularToken {
 	TERM3, 
 	TERM4, 
 	EPS, 
-	END
+	END, 
+	EOF
 }

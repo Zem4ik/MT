@@ -1,6 +1,6 @@
 import java.io.InputStream
 
-private val epsilon = '\u03B5';
+internal val epsilon = '\u03B5';
 
 public enum class NodeType {
     E1, E2, C1, C2, S, K, Terminal;
@@ -113,7 +113,9 @@ public class Parser {
             }
             NodeType.K -> {
                 return when (token) {
-                    Token.STAR -> terminalNode('*', nodeType)
+                    Token.STAR -> Node(nodeType,
+                                terminalNode('*', nodeType),
+                                parseInternal(NodeType.K))
                     else -> terminalNode(epsilon, nodeType)
                 }
             }

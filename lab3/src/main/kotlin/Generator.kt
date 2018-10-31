@@ -199,7 +199,8 @@ class Generator internal constructor(private val grammar: Grammar, private val n
                         if (element is Terminal) {
                             out.println(rule.units[i].code)
                             if (own) {
-                                out.println("\t\t\t\tassert lex.getCurToken() != ${name}Token.${element.name};")
+                                out.println("\t\t\t\tif (lex.getCurToken() != ${name}Token.${element.name})")
+                                out.println("\t\t\t\t\tthrow new IllegalArgumentException(\"Unexpected token \" + lex.getCurString() + \" at position: \" + (lex.getCurPos() - 1));")
                                 out.println("\t\t\t\tlex.nextToken();")
                             }
                         } else {
@@ -224,7 +225,7 @@ class Generator internal constructor(private val grammar: Grammar, private val n
 
                 out.print(
                         "\t\t\tdefault:\n" +
-                                "\t\t\t\tthrow new AssertionError();\n" +
+                                "\t\t\t\tthrow new IllegalArgumentException(\"Unexpected token \" + lex.getCurString() + \" at position: \" + (lex.getCurPos() - 1));\n" +
                                 "\t\t}\n"
                 )
                 if (nonTerminal.returnType() != "void") {

@@ -4,11 +4,13 @@ import edu.uci.ics.jung.visualization.decorators.EdgeShape
 import edu.uci.ics.jung.visualization.decorators.ToStringLabeller
 import java.awt.Color
 import java.awt.geom.Ellipse2D
+import java.io.InputStream
+import java.lang.IllegalArgumentException
 import javax.swing.JFrame
 
 
 fun main(args: Array<String>) {
-    val inputStream = "((abc*b|a)aa|b*b)*".toByteArray().inputStream()
+    val inputStream = "(a**)".toByteArray().inputStream()
     val parser = Parser()
     val root = parser.parse(inputStream)
 

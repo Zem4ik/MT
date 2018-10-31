@@ -68,7 +68,7 @@ class RegularLexer {
 					curToken = RegularToken.END;
 					break;
 				default:
-					if (curString.matches("[a-z]")) {
+					if (curString.matches("[a-zA-Z]")) {
 						nextChar();
 						curToken = RegularToken.TERM1;
 					} else if ((curChar == -1 || isBlank(curChar)) && prev == RegularToken.END) {

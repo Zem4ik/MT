@@ -1,8 +1,12 @@
 grammar Regular
 
 e1
+    : c1 e2 EOF
+    | EPS EOF
+    ;
+
+e3
     : c1 e2
-    | EPS
     ;
 
 e2
@@ -20,10 +24,10 @@ c2
     ;
 
 s
-    : /[a-z]/ | '(' e1 ')'
+    : /[a-zA-Z]/ | '(' e3 ')'
     ;
 
 k
-    : '*'
+    : '*' k
     | EPS
     ;
